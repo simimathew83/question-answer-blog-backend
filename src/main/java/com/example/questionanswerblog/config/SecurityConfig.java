@@ -31,10 +31,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
+
+                .cors(Customizer.withDefaults())
                 // Disable CSRF for simplicity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth-> auth
-                        // Allow register/login endpoints
+                        //for preflight
+                        .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+
+                        // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
 
                         // Allow ALL GET requests that does not require logged-in-user info without authentication
