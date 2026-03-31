@@ -1,5 +1,6 @@
 package com.example.questionanswerblog.service;
 
+import com.example.questionanswerblog.exceptions.UnauthorizedException;
 import com.example.questionanswerblog.model.Answer;
 import com.example.questionanswerblog.model.Question;
 import com.example.questionanswerblog.model.User;
@@ -54,10 +55,17 @@ public class AnswerService {
         // Fetch the answer
         Answer answer = getAnswerById(id);
 
-        // Only admins can delete
-        if(!"ADMIN".equalsIgnoreCase(currentUser.getRole())){
-            throw new RuntimeException("You do NOT have ADMIN privileges delete the answer!");
+        boolean isAdmin = "ADMIN".equalsIgnoreCase(currentUser.getRole());
+        boolean isOwner = currentUser.getId().equals(answer.getUser().getId());
+
+        if(!isAdmin && !isOwner){
+            throw new UnauthorizedException("You are NOT authorized to delete this answer!");
         }
+
+        // Only admins can delete
+        /*if(!"ADMIN".equalsIgnoreCase(currentUser.getRole())){
+            throw new RuntimeException("You do NOT have ADMIN privileges delete the answer!");
+        }*/
 
         // Delete the answer
         answerRepository.deleteById(id);

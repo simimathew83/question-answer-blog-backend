@@ -1,5 +1,6 @@
 package com.example.questionanswerblog.service;
 
+import com.example.questionanswerblog.exceptions.UnauthorizedException;
 import com.example.questionanswerblog.model.Question;
 import com.example.questionanswerblog.model.User;
 import com.example.questionanswerblog.repository.QuestionRepository;
@@ -74,7 +75,8 @@ public class QuestionService {
         // Only the owner or the ADMIN can delete
         if(!question.getUser().getId().equals(currentUser.getId())
             && !"ADMIN".equalsIgnoreCase(currentUser.getRole())){
-            throw new RuntimeException("You are Not authorized to delete the question!");
+            //throw new RuntimeException("You are Not authorized to delete the question!");
+            throw new UnauthorizedException("You are Not authorized to delete the question!");
         }
 
         questionRepository.delete(question);

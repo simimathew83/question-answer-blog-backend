@@ -2,6 +2,8 @@ package com.example.questionanswerblog.controller;
 
 import com.example.questionanswerblog.dto.request.AnswerRequestDTO;
 import com.example.questionanswerblog.dto.response.AnswerResponseDTO;
+import com.example.questionanswerblog.exceptions.ResourceNotFoundException;
+import com.example.questionanswerblog.exceptions.UnauthorizedException;
 import com.example.questionanswerblog.mapper.AnswerMapper;
 import com.example.questionanswerblog.model.Answer;
 import com.example.questionanswerblog.model.Question;
@@ -82,18 +84,21 @@ public class AnswerController {
     public ResponseEntity<String> deleteAnswer(@PathVariable Long answerId){
 
         User currentUser = authService.getCurrentUser();
-        try{
+        try {
             answerService.deleteAnswer(answerId, currentUser);
             return ResponseEntity.ok("Answer deleted successfully!");
-        } catch(RuntimeException ex) {
-            // Catch exceptions thrown by the service layer and return an appropriate HTTP response
+
+        }catch (UnauthorizedException ex){
+            return ResponseEntity.status(403).body(ex.getMessage());
+
+        }catch(ResourceNotFoundException ex){
             return ResponseEntity.status(404).body(ex.getMessage());
         }
 
-
-
+        /*} catch(RuntimeException ex) {
+            // Catch exceptions thrown by the service layer and return an appropriate HTTP response
+            return ResponseEntity.status(404).body(ex.getMessage());
+        }*/
 
     }
-
-
 }
